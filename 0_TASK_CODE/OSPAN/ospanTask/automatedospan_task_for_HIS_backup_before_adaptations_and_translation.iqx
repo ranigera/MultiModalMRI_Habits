@@ -1,0 +1,1600 @@
+<usermanual>
+						
+							Automated Operation Span Task (AOSPAN)
+SCRIPT INFO
+
+Main Inquisit programming: David Nitz (dave@millisecond.com) for Millisecond Software, LLC.
+Additional Inquisit programming: Jerry Grenard (grenard@ucla.edu), Sean Draine (seandr@millisecond.com)
+
+last updated: 01-20-2016 by K.Borchert (katjab@millisecond.com) for Millisecond Software LLC
+
+Script Copyright © 01-20-2016 Millisecond Software
+Task Copyright © 2005 by Dr. Randall Engle (http://psychology.gatech.edu/renglelab/)
+
+
+BACKGROUND INFO
+
+											*Purpose*
+This script implements the Automated Operation Span Task (AOSPAN).
+
+Working Memory Span Tasks Reference:
+CONWAY, A.R.A., KANE, M.J.,BUNTING, M.F., D. ZACH HAMBRICK, D.Z., WILHELM, O., & ENGLE, R.W. (2005).
+Working memory span tasks: A methodological review and user’s guide. Psychonomic Bulletin & Review
+2005, 12 (5), 769-786.
+
+
+											  *Task*
+Participants are presented a visual sequences of letters ranging from 3-7 letters (default) that need to be recalled at the end.
+Each letter in the sequence in preceded by a math problem ("(8*2) - 8 = ?") followed by a proposed solution ("e.g. 9") 
+and participants have to decide whether the proposed solution is correct or not. 
+Letter recall is tested by asking participants to selecte letters from a provided letter matrix.	
+
+
+DATA FILE INFORMATION: 
+The default data stored in the data files are:
+
+(1) Raw data file: 'AOSPAN_raw.iqdat' (a separate file for each participant)
+
+build:							Inquisit build
+computer.platform:				the platform the script was run on
+date, time, subject, group:		date and time script was run with the current subject/groupnumber 
+blockcode, blocknum:			the name and number of the current block
+trialcode, trialnum: 			the name and number of the currently recorded trial
+									(Note: not all trials that are run might record data; by default data is collected unless /recorddata = false is set for a particular trial/block) 
+stimulusitem:					the presented stimuli in order of trial presentation
+response:						the participant's response
+correct:						the correctness of the response (1 = correct; 0 = incorrect)
+latency: 						the response latency (in ms)
+/currentsetsize: 				the number of letters to recall for the current problem
+text.letters.currentitem: 		the currently presented letter
+/mathproblemcount: 				counts the number of math problems in a given block
+text.MathProblem.currentitem: 	the currently presented math problem
+/mathtrueanswer:				the correct math answer
+/mathanswer:					the math response given
+/mathcorrect:					1 = correct math response; 0 = incorrect math response
+/matheaccuracy: 				percentage of correctly solved math problems within the current block
+/mathtotalerrors: 				counts number of any errors (speed or accuracy) made during math problems within the current block
+/mathaccerrors: 				counts the number of incorrectly solved math problems within the current block
+/mathspeederrors: 				counts the number of times participant ran out of time when solving the math problems within the current block
+/recalledletters: 				the number of letters recalled of the current problem
+/ospan:							The OSPAN score, uses the traditional "absolute ospan" scoring method. 
+								It is the sum of all perfectly recalled sets. 
+										So, for example, if an individual recalled correctly 2 letters in a set size of 2,
+										3 letters in a set size of 3, and 3 letters in a set size of 4,
+										their OSPAN score would be 5 (2 + 3 + 0).
+/totalcorrectletters: 			the total number of letters recalled in the correct position.
+/totalrecalledsets: 			the number of correctly recalled sets
+
+(2) Summary data file: 'AOSPAN_summary*.iqdat' (a separate file for each participant)
+
+script.startdate:				date script was run
+script.starttime:				time script was started
+script.subjectid:				subject id number
+script.groupid:					group id number
+script.elapsedtime:				time it took to run script (in ms)
+computer.platform:				the platform the script was run on
+/completed:						0 = script was not completed (prematurely aborted); 1 = script was completed (all conditions run)
+/totalcorrectletters: 			the total number of letters recalled in the correct position.
+/mathtotalerrors: 				counts number of any errors (speed or accuracy) made during math problems within the current block
+/mathaccerrors: 				counts the number of incorrectly solved math problems within the current block
+/mathspeederrors: 				counts the number of times participant ran out of time when solving the math problems within the current block
+/ospan:							The OSPAN score, uses the traditional "absolute ospan" scoring method. 
+									It is the sum of all perfectly recalled sets. 
+									So, for example, if an individual recalled correctly 2 letters in a set size of 2,
+									3 letters in a set size of 3, and 3 letters in a set size of 4,
+									their OSPAN score would be 5 (2 + 3 + 0).
+/totalcorrectletters: 			the total number of letters recalled in the correct position.
+
+
+EXPERIMENTAL SET-UP
+1 Practice Session (default):
+	a) Practice of recalling sequences of letters of set sizes 2-3 in ascending order (4 trials)
+	b) Practice of math task (15 trials)
+	c) Combined practice of recalling sequence of letters (set size 2 only) and math problem: each letter is 
+	preceded by a math problem (3 trials)
+	Letter recall is done by picking out letters from a provided letter matrix.
+
+Test Session (default):
+	15 Trials (15 = 3 repetitions of 5 set sizes; order of set sizes is randomly determined): 
+	Recalling sequences of letters (set size 3-7): each letter is preceded by a math problem;
+	Letter recall is done by picking out letters from a provided letter matrix.
+
+Scoring:
+The program reports five values at the conclusion of the experiment: 
+	
+The first, OSPAN score, uses the traditional "absolute ospan" scoring method. 
+It is the sum of all perfectly recalled sets. 
+So, for example, if an individual recalled correctly 2 letters in a set size of 2,
+3 letters in a set size of 3, and 3 letters in a set size of 4,
+their OSPAN score would be 5 (2 + 3 + 0).
+
+Total number correct is the total number of letters recalled in the correct position
+(2 + 3 + 4 = 9 in the above example). 
+	
+Math errors are reported as total number of errors, 
+accuracy errors where the subject solved the operation incorrectly, 
+and speed errors in which the subject ran out of time 
+in attempting to solve a given operation.
+
+STIMULI:
+Letters: T, L, Q, N, F, H, Y, S, P, K, R, J
+Math Problems (test): created on runtime; only math problems with a *true* result >= 0 are allowed in the task
+
+INSTRUCTIONS
+see section Editable Instructions
+
+EDITABLE CODE:
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further customize your experiment.
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item PracMathProblem>
+/ 01 = "(1*2) + 1 = ?"
+/ 02 = "(1/1) - 1 = ?"
+/ 03 = "(7*3) - 3 = ?"
+/ 04 = "(4*3) + 4 = ?"
+/ 05 = "(3/3) + 2 = ?"
+/ 06 = "(2*6) - 4 = ?"
+/ 07 = "(8*9) - 8 = ?"
+/ 08 = "(4*5) - 5 = ?"
+/ 09 = "(4*2) + 6 = ?"
+/ 10 = "(4/4) + 7 = ?"
+/ 11 = "(8*2) - 8 = ?"
+/ 12 = "(2*9) - 9 = ?"
+/ 13 = "(8/2) + 9 = ?"
+/ 14 = "(3*8) - 1 = ?"
+/ 15 = "(6/3) + 1 = ?"
+/ 16 = "(9/3) - 2 = ?"
+</item>
+
+<item PracMathAnswer>
+/ 01 = "3"
+/ 02 = "2"
+/ 03 = "18"
+/ 04 = "16"
+/ 05 = "1"
+/ 06 = "6"
+/ 07 = "64"
+/ 08 = "11"
+/ 09 = "14"
+/ 10 = "12"
+/ 11 = "2"
+/ 12 = "9"
+/ 13 = "7"
+/ 14 = "23"
+/ 15 = "3"
+/ 16 = "7"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item instructions>
+/ 1 = "In this experiment you will try to memorize letters you see on the screen 
+while you also solve simple math problems.~r 
+In the next few minutes, you will have some practice to get you familiar with how the experiment works.~r
+We will begin by practicing the letter part of the experiment.~r~r~r
+<%expressions.buttoninstruct1%> to begin."
+/ 2 = "For this practice set, letters will appear on the screen one at a time.
+Try to remember each letter in the order presented.~r
+After 2-3 letters have been shown, you will see a screen listing 12 possible letters.
+Your job is to select each letter in the order presented.
+To do this, <%expressions.buttoninstruct2%>.~r
+The letters you select will appear at the bottom of the screen.~r~r~r
+<%expressions.buttoninstruct1%> to continue."
+/ 3 = "When you have selected all the letters, and they are in the correct order,
+hit the EXIT box at the bottom right of the screen.~r
+If you make a mistake, hit the CLEAR box to start over.~r
+If you forget one of the letters, <%expressions.buttoninstruct3%> the BLANK box to mark the spot
+for the missing letter.~r
+Remember, it is very important to get the letters in the same order as you see them.
+If you forget one, use the BLANK box to mark the position.~r
+Do you have any questions so far?~r~r~r
+When you're ready, <%expressions.buttoninstruct1%> to start the letter practice."
+/ 4 = "Now you will practice doing the math part of the experiment.~r~r
+A math problem will appear on the screen, like this:~r
+(2 * 1) + 1 = ?~r
+As soon as you see the math problem, you should compute the correct answer.
+In the above problem, the answer 3 is correct.~r
+When you know the correct answer, you will <%expressions.buttoninstruct1%>.~r~r~r
+<%expressions.buttoninstruct1%> to continue."
+/ 5 = "You will see a number displayed on the next screen,
+along with a box marked TRUE and a box marked FALSE.~r
+If the number on the screen is the correct answer to the math problem,
+<%expressions.buttoninstruct3%> on the TRUE box with the mouse.
+If the number is not the correct answer, <%expressions.buttoninstruct3%> on the FALSE box.~r
+For example, if you see the problem~r
+(2 * 2) + 1 = ?~r
+and the number on the following screen is 5
+<%expressions.buttoninstruct3%> the TRUE box, because the answer is correct.~r
+If you see the problem~r
+(2 * 2) + 1 =  ?~r
+and the number on the next screen is 6
+<%expressions.buttoninstruct3%> the FALSE box, because the correct answer is 5, not 6.~r
+After you <%expressions.buttoninstruct3%> on one of the boxes,
+the computer will tell you if you made the right choice.~r~r~r
+<%expressions.buttoninstruct1%> to continue."
+/ 6 = "It is VERY important that you get the math problems correct.
+It is also important that you try and solve the problem as quickly as you can.~r
+Do you have any questions?~r~r~r
+When you're ready, <%expressions.buttoninstruct1%> to try some practice problems."
+/ 7 = "Now you will practice doing both parts of the experiment at the same time.~r~r
+In the next practice set, you will be given one of the math problems.
+Once you make your decision about the math problem,
+a letter will appear on the screen. Try and remember the letter.~r
+In the previous section where you only solved math problems,
+the computer computed your average time to solve the problems.~r
+If you take longer than your average time,
+the computer will automatically move you onto the next letter part,
+thus skipping the True or False part and will count that problem as a math error.~r
+Therefore it is VERY important to solve the problems
+as quickly and as accurately as possible.~r~r~r
+<%expressions.buttoninstruct1%> to continue."
+/ 8 = "After the letter goes away, another math problem will appear,
+and then another letter.~r
+At the end of each set of letters and math problems, a recall screen will appear.
+Use the mouse to select the letters you just saw.
+Try your best to get the letters in the correct order.~r
+It is important to work QUICKLY and ACCURATELY on the math.
+Make sure you know the answer to the math problem
+before clicking to the next screen.
+You will not be told if your answer to the math problem is correct.~r
+After the recall screen, you will be given feedback about your performance
+regarding both the number of letters recalled and the percent correct on
+the math problems.~r
+Do you have any questions?~r~r~r
+<%expressions.buttoninstruct1%> to continue."
+/ 9 = "During the feedback, you will see a number in red in the top right of the screen.
+This indicates your percent correct for the math problems
+for the entire experiment.~r
+It is VERY important for you to keep this at least at 85%.
+For our purposes, we can only use data where the participant was at least
+85% accurate on the math.~r
+Therefore, in order for you to be asked to come back for future experiments,
+you must perform at least at 85% on the math problems
+WHILE doing your best to recall as many letters as possible.~r
+Do you have any questions?~r~r~r
+<%expressions.buttoninstruct1%> to try some practice problems."
+/ 10 = "That is the end of the practice.~r~r
+The real trials will look like the practice trials you just completed.
+First you will get a math problem to solve, then a letter to remember.~r
+When you see the recall screen, select the letters in the order presented.
+If you forget a letter, <%expressions.buttoninstruct3%> the BLANK box to mark where it should go.~r
+Some of the sets will have more math problems and letters than others.~r
+It is important that you do your best on both the math problems and
+the letter recall parts of this experiment.~r
+Remember on the math you must work as QUICKLY and ACCURATELY as possible.
+Also, remember to keep your math accuracy at 85% or above.~r
+Do you have any questions?~r~r~r
+If not, <%expressions.buttoninstruct1%> to begin the experiment."
+/ 11 = "Thank you for your participation."
+</item>
+
+<text scorereport>
+/ items = ("~tResults for Subject #<%script.subjectid%>~r~r
+	OSPAN Absolute Score:~t<%values.ospan%>
+	OSPAN Total Correct:~t<%values.totalcorrectletters%>~r~r
+	Math Total Errors:~t<%values.mathtotalerrors%>
+	Math Speed Errors:~t<%values.mathspeederrors%>
+	Math Accuracy Errors:~t<%values.mathaccerrors%>~r~r")
+/ size = (80%, 80%)
+/ position = (52%, 50%)
+/ hjustify = left
+/ vjustify = center
+</text>
+
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.haskeyboard) {"tap the screen";} else {"click the mouse button";}
+/buttoninstruct2 = if (computer.touch && !computer.haskeyboard) {"tap the letters you want to select";} else {"use the mouse to select each letter";}
+/buttoninstruct3 = if (computer.touch && !computer.haskeyboard) {"tap";} else {"click";}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+	Adjustable Task Lists:
+	The following list elements contain the set sizes used for the different study phases. 
+	The set sizes determine how many letters the participant has to remember
+	as well as the number of math problems she/he has to solve intermittently.
+	The task can be extended by modifying these values. The script can handle a maximum 
+	set size of 12, task flow will be adjusted automatically.
+	set size of 12, task flow will be adjusted automatically.
+
+**************************************************************************************************************
+	Set Sizes for Letter Practice Phase
+**************************************************************************************************************
+
+<list PracLetterSetSize>
+/ items = (2,2,3,3)
+/ selectionmode = sequence
+/ selectionrate = trial
+</list>
+
+**************************************************************************************************************
+	Set Sizes for Letter & Math Practice Phase
+**************************************************************************************************************
+<list PracBothSetSize>
+/ items = (2,2,2)
+/ selectionmode = sequence
+/ selectionrate = trial
+</list>
+
+**************************************************************************************************************
+	Set Sizes for Letter & Math Test Phase
+**************************************************************************************************************
+
+<list TestBothSetSize>
+/ items = (3,3,3,4,4,4,5,5,5,6,6,6,7,7,7)
+</list>
+
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 5.0.0.0 or higher
+
+<defaults>
+/ canvassize = (100%,100%)
+/ canvasaspectratio = (4,3)
+/ screencolor = white
+/ txcolor = black
+/ txbgcolor = transparent
+/ fontstyle = ("Arial", 4.0%, true)
+/ inputdevice = mouse
+/ minimumversion = "5.0.0.0"
+/ halign = center
+/ valign = center
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, blockcode, blocknum, trialcode, trialnum, latency, response, correct,
+	values.currentsetsize, text.letters.currentitem, values.mathproblemcount, 
+	text.MathProblem.currentitem, values.mathtrueanswer, values.mathanswer, 
+	values.mathcorrect, values.mathaccuracy, values.mathtotalerrors, values.mathaccerrors, 
+	values.mathspeederrors, values.mathtimeout, values.recalledletters, 
+	values.totalcorrectletters, values.totalrecalledsets, values.ospan)
+/ labels = true
+/ separatefiles = true
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (script.startdate, script.starttime, script.subjectid, script.groupid, script.elapsedtime, computer.platform, values.completed, 
+	values.ospan, 
+	values.totalcorrectletters, values.mathtotalerrors, values.mathspeederrors, 
+	values.mathaccerrors)
+/ separatefiles = true
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/completed:				0 = script was not completed; 1 = script was completed (all conditions run)
+
+<values AOSPAN>
+/completed = 0
+/ stopblock=0
+/ learninginterval=1000
+/ currentsetsize=0
+/ lettercount=0
+/ correctletters=0
+/ totalcorrectletters=0
+/ ospan=0
+/ totalrecalledsets=0
+/ recalledletters=""
+/ recallcount=0
+/ recalldelay=0
+/ mathaccuracy=0
+/ mathaccerrors=0
+/ mathcurrenterrors=0
+/ mathtotalerrors=0
+/ mathspeederrors=0
+/ mathtimeout=5000
+/ mathproblemcount=0
+/ matherrorswitch=1
+/ mathcorrect=""
+/ tmp_mathopt01=""
+/ tmp_mathopt02=0
+/ tmp_mathsign=""
+/ tmp_mathopt02sign=""
+/ mathtrueanswer=0
+/ tmp_mathrand=0
+/ mathanswer=0
+/ tmp_initmath01=0
+/ tmp_initmath02=0
+</values>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Letter String Generation is handled by two list elements:
+	PracLetterList and TestLetterList.
+	Letter Practice (Block PracLetter) uses sequential selection.
+	Letter-Math Practice (Block PracBoth) and 
+	Letter-Math Test (Block TestBoth) use random selection 
+	without replacement for each sequence.
+	Switching between lists according to current study phase
+	is handled dynamically by 'expressions.selectionmode'.
+
+<expressions AOSPAN>
+/ selectionmode = if(script.currentblock=="PracLetter")	PracLetterList else TestLetterList
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block InstrPracLetter>
+/ trials = [1-3=instructions]
+/ recorddata = false
+</block>
+
+<block InstrPracMath>
+/ trials = [1-3=instructions]
+/ recorddata = false
+</block>
+
+<block InstrPracBoth>
+/ trials = [1-3=instructions]
+/ recorddata = false
+</block>
+
+<block InstrTestBoth>
+/ trials = [1=instructions]
+/ recorddata = false
+</block>
+
+<block InstrFinal>
+/ trials = [1=instructions; 2=score_report]
+/ recorddata = false
+</block>
+
+<trial instructions>
+/ pretrialpause = 250
+/ posttrialpause = 250
+/ stimulustimes = [1=instructions]
+/ validresponse = (lbuttondown)
+/ responsetime = 2000
+/ recorddata = false
+</trial>
+
+<text instructions>
+/ items = instructions
+/ hjustify = center
+/ vjustify = center
+/ fontstyle = ("Arial", 2.5%, true)
+/ size = (90%, 80%)
+/ position = (50%, 50%)
+/ select = sequence
+/ resetinterval = 0
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI: Letters
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+	The Letter Sequence Generation is handled dynamically by 'expressions.selectionmode':
+	Letter Practice (Block PracLetter) uses sequential selection.
+	Letter-Math Practice (Block PracBoth) and Letter-Math Test (Block TestBoth)
+	use random selection without replacement for each sequence.
+
+<text Letters>
+/ items = ("F","P","Q","J","H","K","T","S","N","R","Y","L")
+/ fontstyle = ("Arial", 5.0%, true)
+/ erase = true(silver)
+/ select =  expressions.selectionmode
+</text>
+
+**************************************************************************************************************
+	Empty Item Elements for Storing Presented and Recalled Letter Sequences
+**************************************************************************************************************
+
+<item PresentedLetters>
+</item>
+
+<item RecalledLetters>
+</item>
+
+**************************************************************************************************************
+	Screen Layout Elements for the Letter Recall Grid
+**************************************************************************************************************
+
+<text F>
+/ items = ("F")
+/ position = (25%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text H>
+/ items = ("H")
+/ position = (50%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text J>
+/ items = ("J")
+/ position = (75%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text K>
+/ items = ("K")
+/ position = (25%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text L>
+/ items = ("L")
+/ position = (50%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text N>
+/ items = ("N")
+/ position = (75%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text P>
+/ items = ("P")
+/ position = (25%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text Q>
+/ items = ("Q")
+/ position = (50%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text R>
+/ items = ("R")
+/ position = (75%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text S>
+/ items = ("S")
+/ position = (25%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text T>
+/ items = ("T")
+/ position = (50%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text Y>
+/ items = ("Y")
+/ position = (75%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text _>
+/ items = ("BLANK")
+/ position = (50%, 72%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clear>
+/ items = ("CLEAR")
+/ position = (18%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text exit>
+/ items = ("EXIT")
+/ position = (82%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickF>
+/ items = ("F")
+/ position = (25%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickH>
+/ items = ("H")
+/ position = (50%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickJ>
+/ items = ("J")
+/ position = (75%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickK>
+/ items = ("K")
+/ position = (25%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickL>
+/ items = ("L")
+/ position = (50%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickN>
+/ items = ("N")
+/ position = (75%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickP>
+/ items = ("P")
+/ position = (25%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickQ>
+/ items = ("Q")
+/ position = (50%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickR>
+/ items = ("R")
+/ position = (75%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickS>
+/ items = ("S")
+/ position = (25%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickT>
+/ items = ("T")
+/ position = (50%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickY>
+/ items = ("Y")
+/ position = (75%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text click_>
+/ items = ("BLANK")
+/ position = (50%, 72%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickclear>
+/ items = ("CLEAR")
+/ position = (18%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickexit>
+/ items = ("EXIT")
+/ position = (82%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text recalledletters>
+/ items = ("<%values.recalledletters%>")
+/ position = (50%, 80%)
+/ txcolor = red
+/ erase = false
+</text>
+
+<text recallprompt>
+/ items = ("Select the letters in the order presented. Use the blank button to fill in forgotten items.")
+/ position = (50%, 5%)
+/ size = (95%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ fontstyle = ("Arial", 2.5%, true)
+/ erase = false
+</text>
+
+<text LetterFeedback>
+/ items = ("You recalled <%values.correctletters%> out of <%values.lettercount%> letters correctly.")
+/ fontstyle = ("Arial", 3.5%, true)
+/ position = (50%, 45%)
+/ erase = true(white)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI: Math
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Math Problems (Practice Phase)
+**************************************************************************************************************
+**************************************************************************************************************
+	Math Problems are hardcoded only for the Math Practice Phase (Block PracMath).
+	For all other Study Phases (Block PracBoth & Block TestBoth) 
+	the Math Problems are generated dynamically.
+**************************************************************************************************************
+**************************************************************************************************************
+<text PracMathProblem>
+/ items = PracMathProblem
+/ position = (50%, 45%)
+/ fontstyle = ("Arial", 3.5%, true)
+/ erase = true(silver)
+/ select = PracMathList
+</text>
+
+<text PracMathAnswer>
+/ items = PracMathAnswer
+/ fontstyle = ("Arial", 3.5%, true)
+/ position = (50%, 30%)
+/ erase = false
+/ select = current(PracMathProblem)
+</text>
+
+<text PracMathFeedback>
+/ items = ("You were correct on <%trial.prac_solve_math.totalcorrectcount%> of <%list.PracMathList.itemcount%> math trials.
+That is <%trial.prac_solve_math.totalpercentcorrect%> percent correct.~r~r~r
+Click the left mouse button to continue.")
+/ fontstyle = ("Arial", 2.5%, true)
+/ size = (65%, 50%)
+/ position = (50%, 50%)
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+	Text and Layout Items used for the Math Trials
+**************************************************************************************************************
+
+<text MathProblemDisplay>
+/ items = ("<%text.MathProblem.currentitem%> = ?")
+/ fontstyle = ("Arial", 3.5%, true)
+/ hjustify = left
+/ position = (50%, 45%)
+/ erase = true(silver)
+</text>
+
+<text MathProblem>
+/ items = ("<%values.tmp_mathopt01%> <%values.tmp_mathsign%> <%values.tmp_mathopt02%>")
+/ fontstyle = ("Arial", 3.5%, true)
+/ hjustify = left
+/ position = (50%, 45%)
+/ erase = true(silver)
+</text>
+
+<text MathCorrect>
+/ items = ("<%text.MathCorrect.selectedvalue%>")
+/ select =  noreplace
+/ fontstyle = ("Arial", 3.5%, true)
+/ position = (50%, 60%)
+/ erase = true(silver)
+</text>
+
+<text MathAnswer>
+/ items = ("<%values.mathanswer%>")
+/ fontstyle = ("Arial", 3.5%, true)
+/ position = (50%, 30%)
+/ erase = true(silver)
+</text>
+
+<text MathScore>
+/ items = ("<%values.mathaccuracy%>%")
+/ fontstyle = ("Arial", 4.0%, true)
+/ position = (85%, 15%)
+/ size = (10%, 10%)
+</text>
+
+<text MathFeedback>
+/ items = (
+"You made <%values.mathcurrenterrors%> math error(s) on this set of trials.",
+"You have made a total of 3 or more math errors during this set of trials. Please do your best on the math.")
+/ select =  values.matherrorswitch
+/ position = (50%, 65%)
+/ size = (80%, 30%)
+/ fontstyle = ("Arial", 3.0%, true)
+</text>
+
+<text TRUE>
+/ items = ("TRUE")
+/ position = (31%, 52%)
+/ size = (10%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ fontstyle = ("Arial", 3.0%, true)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text FALSE>
+/ items = ("FALSE")
+/ position = (69%, 52%)
+/ size = (10%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ fontstyle = ("Arial", 3.0%, true)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text TestMathPrompt>
+/ items = ("Click the left mouse button to continue.")
+/ fontstyle = ("Arial", 2.7%, true)
+/ position = (50%, 65%)
+/ size = (60%, 10%)
+/ erase = false
+</text>
+
+<text PracMathPrompt>
+/ items = ("When you have solved the math problem,~nclick the left mouse button to continue.")
+/ fontstyle = ("Arial", 2.7%, true)
+/ position = (50%, 65%)
+/ size = (60%, 10%)
+/ erase = true(silver)
+</text>
+
+<text correcttext>
+/ items = ("Correct")
+/ position = (50%, 72%)
+/ fontstyle = ("Arial", 3.0%, true)
+/ txcolor = blue
+/ size = (15%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ erase = true(silver)
+</text>
+
+<text incorrecttext>
+/ items = ("Incorrect")
+/ position = (50%, 72%)
+/ fontstyle = ("Arial", 3.0%, true)
+/ txcolor = blue
+/ size = (15%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ erase = true(silver)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI: General Purpose Screen Layout Items
+**************************************************************************************************************
+**************************************************************************************************************
+<shape GrayFrame>
+/ shape = rectangle
+/ color = silver
+/ size = (78.3%, 78%)
+/ erase = false
+</shape>
+
+<shape BlackFrame>
+/ shape = rectangle
+/ color = black
+/ size = (80%, 80%)
+/ position = (50%, 50%)
+/ erase = false
+</shape>
+
+<shape WhiteScreen>
+/ shape = rectangle
+/ color = white
+/ size = (100%, 100%)
+/ position = (50%, 50%)
+/ erase = false
+</shape>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS:
+**************************************************************************************************************
+**************************************************************************************************************
+
+*******************************
+Item Selection
+*******************************
+	
+	Beware: Item Selection differs between the task's Practice and Test Phases!
+	Generally, the single-task practice phases (Blocks PracLetter & PracMath) rely on 
+	sequential item selection. The phases involving both tasks 
+	(Blocks PracBoth & TestBoth) use random selection without replacement.
+
+<list PracLetterList>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12)
+/ selectionmode =  sequence
+/ selectionrate = trial
+</list>
+
+<list TestLetterList>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12)
+</list>
+
+<list PracMathList>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+</list>
+
+*******************************
+Math
+*******************************
+
+<list PracMathCorrect>
+/ items = (
+	"TRUE", "FALSE", "TRUE", "TRUE", "FALSE", "FALSE", "TRUE", "FALSE", 
+	"TRUE", "FALSE", "FALSE", "TRUE", "FALSE", "TRUE", "TRUE", "FALSE")
+/ selectionmode =  text.PracMathProblem.currentindex
+</list>
+
+**************************************************************************************************************
+	Math Problems (Test Phase)
+**************************************************************************************************************
+	Generating the math problem has 4 steps
+	1. Selection of the first operation, MathOpt01: "(9/3)"
+	2. Selection of the second operation, MathOpt012: "- 2"
+	3. Selection of whether the answer presented to subjects should be true or false, MathCorrect: "TRUE" or "FALSE"
+	4. A random number added to the correct answer to make it false, MathRand: "3"
+
+	Additional Math Operations 
+	(add to List 'MathOpt01'):
+	"(4*4)", "(2*8)", "(9*2)", "(6*3)", "(3*6)", "(2*9)", "(5*4)", "(4*5)", 
+	"(7*3)", "(3*7)", "(8*3)", "(6*4)", "(4*6)", "(3*8)", "(5*5)", "(9*3)",
+	"(3*9)", "(7*4)", "(4*7)", "(6*5)", "(5*6)", "(8*4)", "(4*8)", "(7*5)", 
+	"(5*7)", "(9*4)", "(6*6)", "(4*9)", "(8*5)", "(5*8)", "(7*6)", "(6*7)",
+	"(9*5)", "(5*9)", "(8*6)", "(6*8)", "(7*7)", "(9*6)", "(6*9)", "(8*7)",
+	"(7*8)", "(9*7)", "(7*9)", "(8*8)", "(9*8)", "(8*9)", "(9*9)"
+	
+	Difficulties for Additional Operations 
+	(add to List 'MathDifficulty'):
+	"2", "2", "2", "2", "2", "2", "3", "3", 
+	"3", "3", "3", "3", "3", "3", "3", "3", 
+	"3", "3", "3", "3", "3", "3", "3", "3", 
+	"3", "3", "3", "3", "4", "4", "4", "4", 
+	"4", "4", "4", "4", "4", "4", "4", "4",
+	"4", "4", "4", "4", "4", "4", "4"
+
+<list MathOpt01>
+/ items = (
+	"(1/1)", "(2/1)", "(2/2)", "(3/1)", "(3/3)", "(4/1)", "(4/2)", "(4/4)", 
+	"(5/1)", "(5/5)", "(6/1)", "(6/2)", "(6/3)", "(6/6)", "(7/1)", "(7/7)",
+	"(8/1)", "(8/2)", "(8/4)", "(8/8)", "(9/1)", "(9/3)", "(9/9)", "(1*2)", 
+	"(1*3)", "(2*2)", "(1*4)", "(1*5)", "(3*2)", "(2*3)", "(1*6)", "(1*7)", 
+	"(4*2)", "(2*4)", "(1*8)", "(3*3)", "(1*9)", "(5*2)", "(2*5)", "(6*2)", 
+	"(4*3)", "(3*4)", "(2*6)", "(7*2)", "(2*7)", "(5*3)", "(3*5)", "(8*2)")
+/ selectionrate = trial
+</list>
+
+<list MathDifficulty>
+/ items = (
+	"1", "1", "1", "1", "1", "1", "1", "1", 
+	"1", "1", "1", "1", "1", "1", "1", "1", 
+	"1", "1", "1", "1", "1", "1", "1", "1", 
+	"1", "1", "1", "1", "1", "1", "1", "1", 
+	"1", "1", "1", "1", "1", "2", "2", "2", 
+	"2", "2", "2", "2", "2", "2", "2", "2")
+/ selectionmode =  list.MathOpt01.currentindex
+</list>
+
+<list MathOpt02>
+/ items = (
+	"1", "2", "3", "4", "5", "6", "7", "8", "9", 
+	"1", "2", "3", "4", "5", "6", "7", "8", "9")
+</list>
+
+<list MathSign>
+/ items = (
+	"+", "+", "+", "+", "+", "+", "+", "+", "+", 
+	"-", "-", "-", "-", "-", "-", "-", "-", "-")
+</list>
+
+<list MathCorrect>
+/ items = (
+	"TRUE", "TRUE", "TRUE", "TRUE", "TRUE", 
+	"FALSE", "FALSE", "FALSE", "FALSE", "FALSE")
+</list>
+
+**************************************************************************************************************
+	Alternate MathCorrect List Logic
+	/ items = (
+		"TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", 
+		"FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE")
+	/ selectionmode =  list.MathOpt02)
+	/ selectionrate = trial
+**************************************************************************************************************
+
+<list MathRand>
+/ items = (
+	"1", "2", "3", "4", "5", "6", "7", "8", "9", 
+	"-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9")
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: Letters
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Initialization Trial for the Different Study Phases
+**************************************************************************************************************
+
+<trial InitSetSize>
+/ ontrialbegin = [values.currentsetsize=0; values.lettercount=0; values.correctletters=0; 
+	values.recallcount=0; values.recalledletters=""]
+/ ontrialbegin = [if(script.currentblock=="PracLetter")
+	{values.currentsetsize=list.PracLetterSetSize.nextvalue}]
+/ ontrialbegin = [if(script.currentblock=="PracBoth")
+	{values.currentsetsize=list.PracBothSetSize.nextvalue; reset(list.TestLetterList)}]
+/ ontrialbegin = [if(script.currentblock=="TestBoth")
+	{values.currentsetsize=list.TestBothSetSize.nextvalue; reset(list.TestLetterList)}]
+/ ontrialend = [clear(item.PresentedLetters); clear(item.RecalledLetters)]
+/ branch = [if(script.currentblock=="PracLetter")trial.show_letter else trial.InitMathProblem01]
+/ validresponse = (noresponse)
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+	Letter Trials
+**************************************************************************************************************
+
+<trial show_letter>
+/ ontrialbegin = [values.lettercount+=1]
+/ ontrialend= [item.PresentedLetters.item=text.Letters.currentitem]
+/ pretrialpause = 200
+/ stimulusframes = [1=BlackFrame, GrayFrame, Letters, currentsetsize]
+/ trialduration = values.learninginterval
+/ validresponse = (noresponse)
+/ branch = [if(values.lettercount==values.currentsetsize)trial.recall_letter]
+/ branch = [if(script.currentblock=="PracLetter")trial.show_letter else trial.InitMathProblem01]
+/ recorddata = true
+</trial>
+
+<trial recall_letter>
+/ ontrialbegin = [values.recallcount+=1]
+/ ontrialbegin = [if(values.recallcount==1)values.recalldelay=500 else values.recalldelay=0]
+/ pretrialpause = values.recalldelay
+/ stimulusframes = [1=WhiteScreen, F, H, J, K, L, N, P, Q, R, S, T, Y, _, clear, exit, recalledletters, recallprompt, letterstrings]
+/ validresponse = (F, H, J, K, L, N, P, Q, R, S, T, Y, _, clear, exit)
+/ monkeyresponse = ("F", "H", "J", "K", "exit")
+/ ontrialend = [if(trial.recall_letter.response!="exit" && trial.recall_letter.response!="clear")
+	{item.RecalledLetters.item=trial.recall_letter.response; values.recalledletters=concat(values.recalledletters, trial.recall_letter.response)}]
+/ ontrialend = [if(trial.recall_letter.response=="clear")
+	{clear(item.RecalledLetters); values.recalledletters=""}]
+/ responsemessage = (F, clickF, 150)
+/ responsemessage = (H, clickH, 150)
+/ responsemessage = (J, clickJ, 150)
+/ responsemessage = (K, clickK, 150)
+/ responsemessage = (L, clickL, 150)
+/ responsemessage = (N, clickN, 150)
+/ responsemessage = (P, clickP, 150)
+/ responsemessage = (Q, clickQ, 150)
+/ responsemessage = (R, clickR, 150)
+/ responsemessage = (S, clickS, 150)
+/ responsemessage = (T, clickT, 150)
+/ responsemessage = (Y, clickY, 150)
+/ responsemessage = (clear, clickclear, 150)
+/ responsemessage = (exit, clickexit, 150)
+/ responsemessage = (_, click_, 150)
+/ branch = [if(trial.recall_letter.response=="exit")trial.letter_feedback else trial.recall_letter]
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+	Recall Feedback:
+	In this trial, the presented letter sequence	is compared 
+	to the letter string the participant has entered. 
+	Feedback is given accordingly. 
+	This trial also handles reporting of math performance
+	for Letter-Math Practice (Block PracBoth) and 
+	Letter-Math Test (Block TestBoth).
+**************************************************************************************************************
+
+<trial letter_feedback>
+/ pretrialpause = 500
+/ ontrialbegin = [values.correctletters=0]
+/ ontrialbegin = [if(values.mathcurrenterrors>=3)values.matherrorswitch=2 else values.matherrorswitch=1]
+/ ontrialbegin = [
+	if(item.RecalledLetters.item.1 != "" && item.PresentedLetters.item.1==item.RecalledLetters.item.1)values.correctletters+=1; 
+	if(item.RecalledLetters.item.2 != "" && item.PresentedLetters.item.2==item.RecalledLetters.item.2)values.correctletters+=1; 
+	if(item.RecalledLetters.item.3 != "" && item.PresentedLetters.item.3==item.RecalledLetters.item.3)values.correctletters+=1; 
+	if(item.RecalledLetters.item.4 != "" && item.PresentedLetters.item.4==item.RecalledLetters.item.4)values.correctletters+=1; 
+	if(item.RecalledLetters.item.5 != "" && item.PresentedLetters.item.5==item.RecalledLetters.item.5)values.correctletters+=1; 
+	if(item.RecalledLetters.item.6 != "" && item.PresentedLetters.item.6==item.RecalledLetters.item.6)values.correctletters+=1; 
+	if(item.RecalledLetters.item.7 != "" && item.PresentedLetters.item.7==item.RecalledLetters.item.7)values.correctletters+=1; 
+	if(item.RecalledLetters.item.8 != "" && item.PresentedLetters.item.8==item.RecalledLetters.item.8)values.correctletters+=1; 
+	if(item.RecalledLetters.item.9 != "" && item.PresentedLetters.item.9==item.RecalledLetters.item.9)values.correctletters+=1; 
+	if(item.RecalledLetters.item.10 != "" && item.PresentedLetters.item.10==item.RecalledLetters.item.10)values.correctletters+=1; 
+	if(item.RecalledLetters.item.11 != "" && item.PresentedLetters.item.11==item.RecalledLetters.item.11)values.correctletters+=1; 
+	if(item.RecalledLetters.item.12 != "" && item.PresentedLetters.item.12==item.RecalledLetters.item.12)values.correctletters+=1]
+/ ontrialbegin = [if(values.correctletters==values.currentsetsize)
+	{values.ospan=values.ospan+values.correctletters; values.totalrecalledsets+=1}]
+/ ontrialbegin = [values.totalcorrectletters=values.totalcorrectletters+values.correctletters]
+/ ontrialend = [values.mathcurrenterrors=0]
+/ ontrialend = [if(script.currentblock=="PracLetter" && list.PracLetterSetSize.unselectedcount==0)
+	{values.stopblock=1}]
+/ ontrialend = [if(script.currentblock=="PracBoth" && list.PracBothSetSize.unselectedcount==0)
+	{values.stopblock=1}]
+/ ontrialend = [if(script.currentblock=="TestBoth" && list.TestBothSetSize.unselectedcount==0)
+	{values.stopblock=1}]
+/ stimulusframes = [1=WhiteScreen, LetterFeedback, MathFeedback, MathScore, scoredebug]
+/ validresponse = (noresponse)
+/ trialduration = 2000
+/ branch = [trial.InitSetSize]
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: Math
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Math Practice Phase
+**************************************************************************************************************
+
+<trial prac_show_math>
+/ pretrialpause = 500
+/ stimulusframes = [1=BlackFrame, GrayFrame, PracMathProblem, PracMathPrompt]
+/ validresponse = (lbuttondown)
+/ branch = [trial.prac_solve_math]
+/ recorddata = true
+</trial>
+
+<trial prac_solve_math>
+/ ontrialend = [values.mathaccuracy=round(((values.mathproblemcount-values.mathtotalerrors)/values.mathproblemcount)*100)]
+/ pretrialpause = 500
+/ stimulusframes = [1=BlackFrame, GrayFrame, PracMathAnswer, TRUE, FALSE]
+/ validresponse = (TRUE, FALSE)
+/ correctresponse = (list.PracMathCorrect.nextvalue)
+/ responsemessage = (anyresponse, PracMathAnswer, 800)
+/ correctmessage = true(correcttext, 800)
+/ errormessage = true(incorrecttext, 800)
+/ branch = [if(trial.prac_show_math.trialcount >= list.PracMathList.itemcount)
+	trial.prac_math_feedback else trial.prac_show_math]
+/ recorddata = true
+</trial>
+
+<trial prac_math_feedback>
+/ ontrialend = [values.stopblock=1]
+/ pretrialpause = 500
+/ stimulusframes = [1=WhiteScreen, PracMathFeedback]
+/ validresponse = (lbuttondown)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+	Letter-Math Practice & Test Phase
+**************************************************************************************************************
+
+	Setting up Math Problems:
+
+	'InitMathProblem01' and 'InitMathProblem02'
+	are used to set up and check the randomly 
+	generated math problems used for
+	Letter-Math Practice (Block 'PracBoth') and 
+	Letter-Math Test (Block 'TestBoth'). 
+	Only math problems with a *true* result 
+	greater than or equal to zero are allowed in the task. 
+
+	
+	The calculations contained in trial 'InitMathProblem01' 
+	ensure that the participant is given a math problem 
+	with a *true* result greater than or equal to zero.
+	The adjustments may cause MathOpt02 to become zero.	
+	This *does* happen in the original version of the task programmed
+	in E-Prime.	To avoid MathOpt02=0 exchange
+	'/ branch = [if(values.mathanswer<0)trial.InitMathProblem01]' with
+	'/ branch = [if(values.mathanswer<0 || values.tmp_mathopt02==0)trial.InitMathProblem01]'
+
+<trial InitMathProblem01>
+/ ontrialbegin = [values.tmp_initmath01+=1]
+/ ontrialbegin = [if(values.tmp_initmath01==1)
+	{values.tmp_mathopt01=list.MathOpt01.nextvalue;
+	values.tmp_mathsign=list.MathSign.nextvalue;
+	values.tmp_mathopt02=list.MathOpt02.nextvalue;
+	values.mathcorrect=list.MathCorrect.nextvalue;
+	values.tmp_mathopt02sign=concat(values.tmp_mathsign, values.tmp_mathopt02);
+	values.tmp_mathopt02sign=evaluate(values.tmp_mathopt02sign)}]
+/ ontrialbegin = [if(values.tmp_initmath01>1)
+	{values.tmp_mathopt02sign+=3;
+	values.tmp_mathopt02=abs(values.tmp_mathopt02sign)}]
+/ ontrialbegin = [if(values.tmp_initmath01>1 && values.tmp_mathopt02sign>0)
+	values.tmp_mathsign="+"]
+/ ontrialend = [values.mathanswer=evaluate(text.MathProblem.currentitem);
+	values.mathtrueanswer=values.mathanswer]
+/ branch = [if(values.mathanswer<0)trial.InitMathProblem01]
+/ branch = [if(values.mathanswer>=0 && values.mathcorrect=="TRUE")trial.show_math]
+/ branch = [if(values.mathanswer>=0 && values.mathcorrect=="FALSE")trial.InitMathProblem02]
+/ trialduration = 0
+/ validresponse = (noresponse)
+/ recorddata = false
+</trial>
+
+
+	For trials that should present a *false* math answer,
+	a randomly drawn integer ranging from -9 to +9 
+	is added to the math problem's *true* result. 
+	The calculations contained in 'InitMathProblem02' ensure that 
+	this *false* answer is also greater than or equal to zero.
+
+<trial InitMathProblem02>
+/ ontrialbegin = [values.tmp_initmath02+=1]
+/ ontrialbegin = [if(values.tmp_initmath02==1)values.tmp_mathrand=list.MathRand.nextvalue]
+/ ontrialbegin = [if(values.tmp_initmath02>1)values.tmp_mathrand+=2]
+/ ontrialend = [values.mathanswer=evaluate(text.MathProblem.currentitem)+values.tmp_mathrand]
+/ branch = [if(values.mathanswer>=0 && values.mathanswer!=values.mathtrueanswer)trial.show_math else trial.InitMathProblem02]
+/ trialduration = 0
+/ validresponse = (noresponse)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+	The following trials handle presentation of math problems
+	and scoring of participants' responses.
+**************************************************************************************************************
+<trial show_math>
+/ ontrialbegin = [values.tmp_initmath01=0; values.tmp_initmath02=0;
+	values.mathproblemcount+=1]
+/ pretrialpause = 500
+/ stimulusframes = [1=BlackFrame, GrayFrame, MathProblemDisplay, TestMathPrompt, mathtimeout]
+/ validresponse = (lbuttondown)
+/ timeout = values.mathtimeout
+/ ontrialend = [if(trial.show_math.response!="lbuttondown")
+	{values.mathcurrenterrors+=1; values.mathspeederrors+=1; values.mathtotalerrors+=1}]
+/ branch = [if(trial.show_math.response!="lbuttondown")trial.show_letter else trial.solve_math]
+/ recorddata = true
+</trial>
+
+<trial solve_math>
+/ ontrialend = [if(trial.solve_math.correct==0)
+	{values.mathcurrenterrors+=1; values.mathaccerrors+=1; values.mathtotalerrors+=1}]
+/ ontrialend = [values.mathaccuracy=round(((values.mathproblemcount-values.mathtotalerrors)/values.mathproblemcount)*100)]
+/ pretrialpause = 500
+/ stimulusframes = [1=BlackFrame, GrayFrame, MathAnswer, TRUE, FALSE, mathdebug]
+/ validresponse = (TRUE, FALSE)
+/ correctresponse = (values.mathcorrect)
+/ branch = [trial.show_letter]
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	SCORING
+**************************************************************************************************************
+**************************************************************************************************************
+
+	The program reports five values at the conclusion of the experiment: 
+	
+	The first, OSPAN score, uses the traditional "absolute ospan" scoring method. 
+	It is the sum of all perfectly recalled sets. 
+	So, for example, if an individual recalled correctly 2 letters in a set size of 2,
+	3 letters in a set size of 3, and 3 letters in a set size of 4,
+	their OSPAN score would be 5 (2 + 3 + 0).
+
+	Total number correct is the total number of letters recalled in the correct position
+	(2 + 3 + 4 = 9 in the above example). 
+	
+	Math errors are reported as total number of errors, 
+	accuracy errors where the subject solved the operation incorrectly, 
+	and speed errors in which the subject ran out of time 
+	in attempting to solve a given operation.
+
+<trial score_report>
+/ stimulusframes = [1=scorereport]
+/ validresponse = (lbuttondown)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block PracLetter>
+/ onblockbegin = [if(script.subjectid!="debug")
+	{text.currentsetsize.textcolor=white; text.letterstrings.textcolor=white; 
+	text.mathdebug.textcolor=silver; text.mathtimeout.textcolor=silver;
+	text.scoredebug.textcolor=white}]
+/ onblockbegin = [text.MathFeedback.textcolor=white; text.MathScore.textcolor=white; values.stopblock=0]
+/ onblockend = [values.stopblock=0]
+/ stop = [values.stopblock==1]
+/ trials = [1=InitSetSize]
+</block>
+
+<block PracMath>
+/ onblockbegin = [if(script.subjectid!="debug")
+	{text.currentsetsize.textcolor=white; text.letterstrings.textcolor=white; 
+	text.mathdebug.textcolor=silver; text.mathtimeout.textcolor=silver;
+	text.scoredebug.textcolor=white}]
+/ onblockbegin = [values.mathaccuracy=0]
+/ onblockend = [values.mathtimeout=(2.5*trial.prac_show_math.totalsdlatency)+trial.prac_show_math.totalmeanlatency]
+/ onblockend = [values.stopblock=0]
+/ stop = [values.stopblock==1]
+/ trials = [1=prac_show_math]
+</block>
+
+<block PracBoth>
+/ onblockbegin = [if(script.subjectid!="debug")
+	{text.currentsetsize.textcolor=white; text.letterstrings.textcolor=white; 
+	text.mathdebug.textcolor=silver; text.mathtimeout.textcolor=silver;
+	text.scoredebug.textcolor=white}]
+/ onblockbegin = [text.MathFeedback.textcolor=black; text.MathScore.textcolor=red]
+/ onblockbegin = [values.mathcurrenterrors=0; values.mathaccuracy=0; values.mathaccerrors=0;
+	values.mathtotalerrors=0; values.mathspeederrors=0; values.mathproblemcount=0;
+	values.lettercount=0; values.correctletters=0; values.currentsetsize=0;
+	values.recallcount=0; values.recalledletters=""; values.totalrecalledsets=0; 
+	values.totalcorrectletters=0; values.ospan=0]
+/ stop = [values.stopblock==1]
+/ onblockend = [values.stopblock=0]
+/ trials = [1=InitSetSize]
+</block>
+
+<block TestBoth>
+/ onblockbegin = [if(script.subjectid!="debug")
+	{text.currentsetsize.textcolor=white; text.letterstrings.textcolor=white; 
+	text.mathdebug.textcolor=silver; text.mathtimeout.textcolor=silver;
+	text.scoredebug.textcolor=white}]
+/ onblockbegin = [text.MathFeedback.textcolor=black; text.MathScore.textcolor=red]
+/ onblockbegin = [values.mathcurrenterrors=0; values.mathaccuracy=0; values.mathaccerrors=0;
+	values.mathtotalerrors=0; values.mathspeederrors=0; values.mathproblemcount=0;
+	values.lettercount=0; values.correctletters=0; values.currentsetsize=0;
+	values.recallcount=0; values.recalledletters=""; values.totalrecalledsets=0; 
+	values.totalcorrectletters=0; values.ospan=0]
+/ stop = [values.stopblock==1]
+/ trials = [1=InitSetSize]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt AOSPAN>
+/ onexptbegin = [if(script.subjectid!="debug")
+	{text.currentsetsize.textcolor=white; text.letterstrings.textcolor=white; 
+	text.mathdebug.textcolor=silver; text.mathtimeout.textcolor=silver;
+	text.scoredebug.textcolor=white}]
+/ blocks = [1=InstrPracLetter; 2=PracLetter; 3=InstrPracMath; 4=PracMath; 
+	5=InstrPracBoth; 6=PracBoth; 7=InstrTestBoth; 8=TestBoth; 9=InstrFinal]
+/onexptend = [values.completed = 1]
+</expt>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEBUG: On-Screen Debugging Items
+**************************************************************************************************************
+**************************************************************************************************************
+	These items are invisible by default. 
+	Enter 'debug' as subject id to enable them.
+
+<text currentsetsize>
+/ items = (	"Setsize: <%values.currentsetsize%> / Lettercount: <%values.lettercount%>")
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ size = (50%, 5%)
+/ position = (50%, 5%)
+</text>
+
+<text letterstrings>
+/ items = ("~tPresented Letters:~t<%item.PresentedLetters.item.1%><%item.PresentedLetters.item.2%><%item.PresentedLetters.item.3%><%item.PresentedLetters.item.4%><%item.PresentedLetters.item.5%><%item.PresentedLetters.item.6%><%item.PresentedLetters.item.7%><%item.PresentedLetters.item.8%><%item.PresentedLetters.item.9%><%item.PresentedLetters.item.10%><%item.PresentedLetters.item.11%><%item.PresentedLetters.item.12%>
+~tRecalled Letters:~t<%item.RecalledLetters.item.1%><%item.RecalledLetters.item.2%><%item.RecalledLetters.item.3%><%item.RecalledLetters.item.4%><%item.RecalledLetters.item.5%><%item.RecalledLetters.item.6%><%item.RecalledLetters.item.7%><%item.RecalledLetters.item.8%><%item.RecalledLetters.item.9%><%item.RecalledLetters.item.10%><%item.RecalledLetters.item.11%><%item.RecalledLetters.item.12%>")
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ size = (55%, 5%)
+/ position = (50%, 87%)
+/ hjustify = left
+/ vjustify = center
+/ erase = false
+</text>
+
+<text mathdebug>
+/ items = ("~tMath Problem:~t~t<% text.MathProblem.currentitem %>~r
+~tTrue Answer:~t~t<% values.mathtrueanswer %>~r
+~tPresented Answer:~t<% values.mathcorrect %>~r~r")
+/ size = (50%, 7%)
+/ halign = center
+/ hjustify = center
+/ position = (45%, 70%)
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ erase = true(silver)
+</text>
+
+<text mathtimeout>
+/ items = ("Timeout = <%values.mathtimeout%> ms~r
+Math Problem # <%values.mathproblemcount%>")
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ size = (50%, 5%)
+/ position = (50%, 20%)
+/ erase = true(silver)
+</text>
+
+<text scoredebug>
+/ items = ("OSPAN Score:~t~t<% values.ospan %>
+Total Number Correct:~t<% values.totalcorrectletters %>~r~r
+Math Errors (Total):~t<% values.mathtotalerrors %>
+Math Speed Errors:~t<% values.mathspeederrors %>
+Math Accuracy Errors:~t<% values.mathaccerrors %>~r~r")
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ size = (50%, 5%)
+/ position = (50%, 75%)
+/ erase = true(white)
+</text>
+
+<monkey AOSPAN>
+/ latencydistribution = normal(800, 200)
+/ percentcorrect = 100
+</monkey>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************
