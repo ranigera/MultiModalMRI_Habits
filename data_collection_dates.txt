@@ -1,0 +1,5 @@
+Data for this project was collected between:
+October 23th 2019 and May 3rd 2022
+with a 1 year break due to Covid-19 between March 11th 2020 and March 9th 2021 - during which we did not collect any data.
+
+* Each file in the /1_behaviorAnalysis/raw_behavioral_data/sub-*/1-data/ (raw behavioral data) contains a timestamp indicating when the particular data have been collected.
