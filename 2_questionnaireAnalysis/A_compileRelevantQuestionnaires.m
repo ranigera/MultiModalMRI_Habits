@@ -7,11 +7,11 @@
 close all; clear all
 
 %% params
-behav_data_file = '/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Analysis/behaviorAnalysis/my_databases/txt_data/presses_HIS_May_2022.csv';
-behav_data_subgroups_file = '/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Analysis/behaviorAnalysis/my_databases/txt_data/clustered_subgroups_HIS_May_2022.csv';
-questionnaire_data_file = '/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Analysis/questionnaireAnalysis/HIS - BIS_STAI_TICS Questionnaires data for EFA.csv';
-output_questionnaire_scores_file  = '/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Analysis/questionnaireAnalysis/HIS_QUESTIONNARE_SCORES.csv';
-output_questionnaire_scores_subgroups_file  = '/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Analysis/questionnaireAnalysis/HIS_QUESTIONNARE_SCORES_w_subgroups_scores.csv';
+behav_data_file = '../1_behaviorAnalysis/my_databases/txt_data/presses_HIS_May_2022.csv';
+behav_data_subgroups_file = '../1_behaviorAnalysis/my_databases/txt_data/clustered_subgroups_HIS_May_2022.csv';
+questionnaire_data_file = 'HIS - BIS_STAI_TICS Questionnaires data for EFA.csv';
+output_questionnaire_scores_file  = 'HIS_QUESTIONNARE_SCORES.csv';
+output_questionnaire_scores_subgroups_file  = 'HIS_QUESTIONNARE_SCORES_w_subgroups_scores.csv';
 
 %% read data
 behav_data = readtable(behav_data_file);

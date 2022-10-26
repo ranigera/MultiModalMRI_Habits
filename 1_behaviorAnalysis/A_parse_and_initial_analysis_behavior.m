@@ -30,10 +30,10 @@ analysis_name      = ['HIS_' time{2} '_' time{3}];
 
 % DIRECTORIES:
 % codes:
-homedir                   = '/Users/ranigera/Google_Drive_TAU/Experiments/HIS_STUDY/Analysis/behaviorAnalysis/'; % change this so that it correspond to your analysis folder
-fileWithExclusions        = '/Users/ranigera/Google_Drive_TAU/Experiments/HIS_STUDY/Analysis/codes/paths_and_vars.py';
+homedir                   = './'; % change this so that it correspond to your analysis folder
+fileWithExclusions        = 'exclusion_list.txt';
 % data:
-behavDataFolder           = '/Users/ranigera/HIS_DATA_Local/raw_behavioral_data/';
+behavDataFolder           = 'raw_behavioral_data/';
 
 % output folders:
 matlab_extracted_data_dir = fullfile(homedir, 'my_databases/matlab_data/');

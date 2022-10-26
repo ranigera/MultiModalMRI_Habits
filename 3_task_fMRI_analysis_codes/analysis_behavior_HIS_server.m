@@ -19,10 +19,10 @@ analysis_name      = 'HIS_behavior';
 
 % DIRECTORIES:
 % codes:
-homedir                   = '/export2/DATA/HIS/HIS_server/analysis/behavior_analysis_output/'; % change this so that it correspond to your analysis folder
-folderWithRelevantSubjects        = '/export2/DATA/HIS/HIS_server/analysis/task_fMRI_data/';
+homedir                   = '../1_behaviorAnalysis/';
+folderWithRelevantSubjects        = '/export2/DATA/HIS/HIS_server/analysis/task_fMRI_data/'; % change this so that it correspond to your fMRI analysis folder
 % data:
-behavDataFolder           = '/export2/DATA/HIS/HIS_server/behavior/';
+behavDataFolder           = '../1_behaviorAnalysis/raw_behavioral_data/';
 % output folders:
 matlab_extracted_data_dir = fullfile(homedir, 'my_databases/matlab_data/');
 txt_dir                   = fullfile(homedir, 'my_databases/txt_data/');

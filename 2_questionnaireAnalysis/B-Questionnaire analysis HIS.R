@@ -13,10 +13,10 @@ pacman::p_load(car,afex,doBy,lme4,lmerTest,ggplot2,ggExtra,BayesFactor,sjstats,j
 #---------------------------------------------------------------------------
 #                    PRELIMINARY STUFF 
 #---------------------------------------------------------------------------
-data_base_file <- '/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Analysis/behaviorAnalysis/my_databases/txt_data/presses_HIS_May_2022.csv'
-output_questionnaire_scores_file  = '/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Analysis/questionnaireAnalysis/HIS_QUESTIONNARE_SCORES.csv';
-output_questionnaire_scores_subgroups_file  = '/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Analysis/questionnaireAnalysis/HIS_QUESTIONNARE_SCORES_w_subgroups_scores.csv';
-figures_path = '/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Analysis/questionnaireAnalysis/Figs/'
+data_base_file <- '../1_behaviorAnalysis/my_databases/txt_data/presses_HIS_May_2022.csv'
+output_questionnaire_scores_file  = 'HIS_QUESTIONNARE_SCORES.csv';
+output_questionnaire_scores_subgroups_file  = 'HIS_QUESTIONNARE_SCORES_w_subgroups_scores.csv';
+figures_path = 'Figs/'
 #get data
 output_questionnaire_scores = read.csv(output_questionnaire_scores_file)
 FULL <- read.csv(data_base_file, header=TRUE, sep=",")

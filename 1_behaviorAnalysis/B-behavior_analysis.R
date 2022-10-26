@@ -18,7 +18,7 @@ pacman::p_load(flexmix, plotrix, scales, rstudioapi,effectsize, car, lme4, lmerT
 home_path <- dirname(getActiveDocumentContext()$path)
 data_base_file <- file.path(home_path,'my_databases/txt_data/presses_HIS_May_2022.csv')
 ratings_data <- file.path(home_path,'my_databases/txt_data/food_liking_HIS_May_2022.txt')
-figures_path    <- ('/Volumes/GoogleDrive/My Drive/Experiments/HIS_STUDY/Documents/Accepted_MS/Completion/Figs_stage2')
+figures_path    <- file.path(home_path,'figures')
 clustered_data_file <- file.path(home_path,'my_databases/txt_data/clustered_subgroups_HIS_May_2022.csv')
 setwd (home_path)
 
