@@ -14,6 +14,5 @@
 > To use the neuroimaging code analyses some paths within the codes need to be adjusted according to how one chooses to place on their local machines the neruroimaging data and according to the folders targeted to contain the newly formed files.
 <br/><br/>
 * Unthresholded statistical maps along with ROI masks can found in https://neurovault.org/collections/13090/
-<br/>
-<br/>
-[![DOI](https://zenodo.org/badge/557188299.svg)](https://zenodo.org/badge/latestdoi/557188299)
+<br/><br/>
+
