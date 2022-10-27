@@ -16,3 +16,4 @@
 * Unthresholded statistical maps along with ROI masks can found in https://neurovault.org/collections/13090/
 <br/><br/>
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7256204.svg)](https://doi.org/10.5281/zenodo.7256204)
