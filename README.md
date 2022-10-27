@@ -1,5 +1,4 @@
-# MultiModalMRI_Habits
-Repository for the study "Characterizing habit learning in the human brain at the individual and group levels: a multi-modal MRI study" (Gera et al.)
+# Repository for the study "Characterizing habit learning in the human brain at the individual and group levels: a multi-modal MRI study" (Gera et al.)
 
 
 ## Notes:
