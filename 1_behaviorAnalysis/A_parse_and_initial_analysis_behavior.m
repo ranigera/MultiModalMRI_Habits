@@ -408,10 +408,23 @@ if save_results
     % Create the variabe of change/habit index for the table:
     habit_index = repelem(Rresponding.habit_index(:), length(list_name));
     
+    % get average response rate throughout the task
+    avgTrainingPressRate1day = mean([learning.day1group.day1.val; learning.day1group.day1.deval])';
+    avgTrainingPressRate3day = mean([learning.day3group.day1.val; learning.day3group.day1.deval;...
+        learning.day3group.day2.val; learning.day3group.day2.deval;...
+        learning.day3group.day3.val; learning.day3group.day3.deval])';
+    trainingPressingRate = num2cell(repelem([avgTrainingPressRate1day; avgTrainingPressRate3day],3,1));
+
+    avgTrainingPressRate1dayExcludingLastRun = mean([learning.day1group.day1.val(1:end-6,:); learning.day1group.day1.deval(1:end-6,:)])';
+    avgTrainingPressRate3dayExcludingLastRun = mean([learning.day3group.day1.val(1:end-6,:); learning.day3group.day1.deval(1:end-6,:);...
+        learning.day3group.day2.val(1:end-6,:); learning.day3group.day2.deval(1:end-6,:);...
+        learning.day3group.day3.val(1:end-6,:); learning.day3group.day3.deval(1:end-6,:)])';
+    trainingPressingRateExcludingLastRun = num2cell(repelem([avgTrainingPressRate1dayExcludingLastRun; avgTrainingPressRate3dayExcludingLastRun],3,1));
+
     % database
-    database = table(ID, GROUP, VALUE, presses_pre, presses_post, presses_reacquisition, presses_change, habit_index);
+    database = table(ID, GROUP, VALUE, presses_pre, presses_post, presses_reacquisition, presses_change, habit_index, trainingPressingRate, trainingPressingRateExcludingLastRun);
     % write database in csv file
-    writetable(database, [txt_dir 'presses_' analysis_name '.csv'])
+    writetable(database, [txt_dir 'presses_' analysis_name 'X.csv'])
     
 end
 

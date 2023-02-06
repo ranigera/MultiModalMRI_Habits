@@ -1,8 +1,8 @@
 ####################################################################################################
-# R code for the registeed report study accepted to Neuroimage:
+# R code for the registered report study accepted to Neuroimage:
 # "Characterizing habit learning in the human brain at the individual and group levels: a multi-modal MRI study"
 # adopted form the code made by Eva Pool (from the work by Pool et al., 2022) 
-## Last modified by Rani on May 2022
+## Last modified by Rani on January 2023
 ## These analyses are based on the files produced in matlab by analysis_behavior_HIS.m
 ####################################################################################################
 # ----------------------------------------- PRELIMINARY STUFF ---------------------------------------------------------------------------
@@ -71,7 +71,7 @@ t.test(RATINGS.regular.hunger$liking[RATINGS.regular.hunger$time == "post" & RAT
 ggline(RATINGS.regular.hunger, x = "time", y = "liking", color = "group", add = c("mean_se","jitter"), order = c("pre", "post"), ylab = "Hunger", xlab = "Time relative to devaluation") # plot
 
 
-#----------------------------- Manipulation checks FIGURE 2-------------------------
+#----------------------------- Manipulation checks FIGURE 5-------------------------
 
 RATINGS.regular.liking$time   <- dplyr::recode(RATINGS.regular.liking$time, "pre" = "Before", "post" = "After")
 RATINGS.regular.hunger$time   <- dplyr::recode(RATINGS.regular.hunger$time, "pre" = "Before", "post" = "After")
@@ -138,28 +138,7 @@ summary(main <- aov_car(presses_change ~ GROUP*VALUE + Error (ID/VALUE), data = 
 omega_squared(main)
 ggline(FULL, x = "VALUE", y = "presses_change", color = "GROUP", add = c("mean_sd", "jitter"), order = c("valued", "devalued")) # plot
 
-# ----- (Required) post-hoc t-tests:
-# verify there are NO SIGNIFICANT DIFFERENCES in response rates between the two GROUPS during the last training session:
-meanPressesPrePost = ddply(FULL, .(ID,GROUP), summarise, meanPressesPre=mean(presses_pre), meanPressesPost=mean(presses_post)) # means
-t.test(meanPressesPrePost$meanPressesPre[meanPressesPrePost$GROUP == 1], meanPressesPrePost$meanPressesPre[meanPressesPrePost$GROUP == 3]) # independet 2-groups ttest
-
-# 1-Day group valued vs. devalued during last training run:
-t.test(FULL$presses_pre[FULL$VALUE == "valued" & FULL$GROUP == 1], FULL$presses_pre[FULL$VALUE == "devalued" & FULL$GROUP == 1], paired = TRUE) # paired
-# 3-Day group valued vs. devalued during last training run:
-t.test(FULL$presses_pre[FULL$VALUE == "valued" & FULL$GROUP == 3], FULL$presses_pre[FULL$VALUE == "devalued" & FULL$GROUP == 3], paired = TRUE) # paired
-
-# 1-Day group valued changed vs. devalued change:
-t.test(FULL$presses_change[FULL$VALUE == "valued" & FULL$GROUP == 1], FULL$presses_change[FULL$VALUE == "devalued" & FULL$GROUP == 1], paired = TRUE) # paired
-# 3-Day group valued changed vs. devalued change:
-t.test(FULL$presses_change[FULL$VALUE == "valued" & FULL$GROUP == 3], FULL$presses_change[FULL$VALUE == "devalued" & FULL$GROUP == 3], paired = TRUE) # paired
-
-# 1-Day group valued  vs. devalued during extinction:
-t.test(FULL$presses_post[FULL$VALUE == "valued" & FULL$GROUP == 1], FULL$presses_post[FULL$VALUE == "devalued" & FULL$GROUP == 1], paired = TRUE) # paired
-# 3-Day group valued  vs. devalued during extinction:
-t.test(FULL$presses_post[FULL$VALUE == "valued" & FULL$GROUP == 3], FULL$presses_post[FULL$VALUE == "devalued" & FULL$GROUP == 3], paired = TRUE) # paired
-
-
-#----------------------------- FIGURE 5 Main behavioral results  -------------------------
+#----------------------------- FIGURE 4 Main behavioral results  -------------------------
 BASIC = FULL[,c('ID', 'GROUP', 'VALUE', 'presses_pre','presses_post')]
 colnames(BASIC) <- c('ID','GROUP', 'VALUE', 'Before','After')
 # to include reacquisition:
@@ -221,6 +200,88 @@ ggsave(file.path(figures_path,'MainBehavioral_Bar.tiff'), pp, dpi = 100)
 
 
 # ----------------------------------------- END OF REGISTERED (non-exploratory) ANALYSIS -----------------------------------------
+#---------------------------- ADDED AFTER A REVIEW 
+########################## Reacquisition exploratory behavioral analysis (outcome devaluation induced changes)
+
+# ----- MAIN:
+FULL_ra=FULL
+FULL_ra$ra_min_post = FULL_ra$presses_reacquisition - FULL_ra$presses_post
+
+summary(main_ra <- aov_car(ra_min_post ~ GROUP*VALUE + Error (ID/VALUE), data = FULL_ra))
+omega_squared(main_ra)
+
+#----------------------------- FIGURE S1 Main behavioral results  -------------------------
+BASIC = FULL_ra[,c('ID', 'GROUP', 'VALUE', 'presses_post', 'presses_reacquisition')]
+colnames(BASIC) <- c('ID','GROUP', 'VALUE', 'Extinction','Reacquisition')
+BASIC = BASIC %>% gather(time, mean_presses, -c(ID, GROUP, VALUE))
+BASIC = BASIC[order(BASIC$ID, BASIC$GROUP),]
+BASIC$time = as.factor(BASIC$time)
+
+BASIC$VALUE   <- dplyr::recode(BASIC$VALUE, "devalued" = "Devalued", "valued" = "Valued" )
+BASIC$GROUP  <- dplyr::recode(BASIC$GROUP, "1" = "Short training", "3" = "Extensive training" )
+BASIC$VALUE = relevel(BASIC$VALUE, "Valued")
+
+p <- ggplot(BASIC, aes(x = interaction(VALUE,time), y = mean_presses, fill=VALUE, color = VALUE)) +
+  geom_point(alpha = .2, position = position_jitterdodge(jitter.width = .5, jitter.height = 0)) +
+  geom_line(data = BASIC, aes(group = interaction(ID,time), y = mean_presses, color = VALUE), alpha = .2, size = 0.3, color='gray') +
+  geom_bar(alpha=0.1, stat = "summary", fun = "mean") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width=.2) +
+  scale_y_continuous(breaks= pretty_breaks()) +
+  ylab('Responses / sec')+
+  xlab('Test') +
+  facet_grid(.~GROUP) +
+  scale_x_discrete(drop = FALSE, labels=c("Valued.Extinction" = "", "Devalued.Extinction" = "Extinction", "Valued.Reacquisition" = "", "Devalued.Reacquisition" = "Reacquisition"))+
+  scale_fill_manual(values=c("slateblue", "darkorange3")) + scale_color_manual(values=c("slateblue", "darkorange3"))
+
+pp <- p + theme_light(base_size = 14, base_family = "Helvetica")+
+  theme(strip.text.x = element_text(size = 16, face = "bold"),
+        strip.text.y = element_text(size = 16, face = "bold"),
+        strip.text = element_text(colour = 'black'),
+        strip.background = element_rect(color="white", fill="white", linetype="solid"),
+        axis.text.x = element_text(hjust=1, face="bold", size=14),
+        axis.ticks.x = element_blank(),
+        legend.box.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color="gray", size=0.05),
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold"))
+
+pp$labels$fill <- "Outcome type"
+pp$labels$colour <- "Outcome type"
+
+pp
+
+ggsave(file.path(figures_path,'ReacquisitionBehavioral_Bar.tiff'), pp, dpi = 100)
+
+
+########################## Reacquisition exploratory behavioral analysis (outcome devaluation induced changes)
+
+## Exploratory Kolmogorov-Smirnov test of the habit index
+
+habitIndex_data = ddply(FULL,.(ID,GROUP),summarise,habit_index=mean(habit_index))
+shortHabitIndex = habitIndex_data[habitIndex_data$GROUP==1,]$habit_index
+longHabitIndex = habitIndex_data[habitIndex_data$GROUP==3,]$habit_index
+
+ks.test(shortHabitIndex, longHabitIndex)
+
+
+########################## Testing effect of response rate throughout the task (which maybe represent motivation and aligned with response-outcome experienced contingency)
+
+training_and_habitIndex_data = ddply(FULL,.(ID,GROUP),summarise,habit_index=mean(habit_index), trainingPressingRate=mean(trainingPressingRate), trainingPressingRateExcludingLastRun=mean(trainingPressingRateExcludingLastRun))
+cor.test(training_and_habitIndex_data$trainingPressingRate, training_and_habitIndex_data$habit_index, method = "pearson")
+cor.test(training_and_habitIndex_data$trainingPressingRate, training_and_habitIndex_data$habit_index, method = "spearman")
+cor.test(training_and_habitIndex_data$trainingPressingRateExcludingLastRun, training_and_habitIndex_data$habit_index, method = "pearson")
+cor.test(training_and_habitIndex_data$trainingPressingRateExcludingLastRun, training_and_habitIndex_data$habit_index, method = "spearman")
+
+# regression test
+FULL_pressInTrainging = FULL
+FULL_pressInTrainging$trainingPressingRate = scale(FULL_pressInTrainging$trainingPressingRate)
+FULL_pressInTrainging$trainingPressingRateExcludingLastRun = scale(FULL_pressInTrainging$trainingPressingRateExcludingLastRun)
+summary(main <- lm(habit_index ~ GROUP*trainingPressingRate, data = FULL_pressInTrainging))
+summary(main <- lm(habit_index ~ GROUP*trainingPressingRateExcludingLastRun, data = FULL_pressInTrainging))
+
+#---------------------------- END OF ADDED AFTER A REVIEW (but see another section in the clustering part)
+
 ###############################################  Some additional analyses:
 fractal_data <- file.path(home_path,'my_databases/txt_data/fractal_ratings_HIS_May_2020.txt')
 FRACTALS=read.delim(fractal_data, header = TRUE, sep = "\t")
@@ -230,7 +291,7 @@ FRACTALS$ID        <- factor(FRACTALS$ID)
 FRACTALS$group     <- factor(FRACTALS$group)
 FRACTALS$value     <- factor(FRACTALS$value)
 
-# ----- contingency awarness test
+# ----- contingency awareness test
 t.test(FRACTALS$contingency[FRACTALS$value == "val" | FRACTALS$value == "deval"]) # for val and deval; (one sample t-test against 0) ; expected: significant
 t.test(FRACTALS$contingency[FRACTALS$value == "baseline"]) # for baseline ; (one sample t-test against 0) ; expected: non-significant
 # test for group difference and interaction:
@@ -319,16 +380,16 @@ p <-  ggplot(clustering_data, aes(habit_score, fill = Cluster)) +
 
 pp <- p + theme_classic(base_size = 11, base_family = "Helvetica")+
   theme(
-        strip.background = element_blank(),
-        strip.text = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.x = element_text(size = 16),
-        axis.title.y = element_text(size = 16),
-        panel.grid.major = element_line(color="gray", size=0.1),
-        legend.position = c(0.85, 0.85),
-        legend.background = element_rect(fill = "white", color = "gray"),
-        aspect.ratio=0.8
-        )
+    strip.background = element_blank(),
+    strip.text = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    panel.grid.major = element_line(color="gray", size=0.1),
+    legend.position = c(0.85, 0.85),
+    legend.background = element_rect(fill = "white", color = "gray"),
+    aspect.ratio=0.8
+  )
 pp$labels$fill <- "Subgroup"
 
 ggsave(file.path(figures_path,'Cluster_analysis.tiff'), pp, dpi = 100, height = 605, width=416, units = "px")
@@ -350,6 +411,26 @@ write.csv(clustering_data, file=clustered_data_file, row.names = FALSE)
 
 # copy the file to the server relevant folder (for the MRI-related analyses):
 system(paste('rsync -a --progress', paste("'",clustered_data_file,"'", sep=""), 'shirangera@boost.tau.ac.il:/export2/DATA/HIS/HIS_server/analysis/behavior_analysis_output/my_databases/txt_data'))
+
+
+#---------------------------- ADDED AFTER A REVIEW 
+##### Explore  effects of response rate throughout the task (which maybe represent motivation and aligned with response-outcome experienced contingency)
+
+# add trainingPressingRate data
+clustering_data$trainingPressingRate = 0
+clustering_data$trainingPressingRateExcludingLastRun = 0
+for (sub in clustering_data$ID) {
+  clustering_data[clustering_data$ID==sub,]$trainingPressingRate = FULL[FULL$ID==sub,]$trainingPressingRate[1]
+  clustering_data[clustering_data$ID==sub,]$trainingPressingRateExcludingLastRun = FULL[FULL$ID==sub,]$trainingPressingRateExcludingLastRun[1]
+}
+
+# test (anova)
+summary(main <- aov(trainingPressingRate ~ group*Cluster, data = clustering_data))
+omega_squared(main)
+
+summary(main <- aov(trainingPressingRateExcludingLastRun ~ group*Cluster, data = clustering_data))
+omega_squared(main)
+#---------------------------- END OF ADDED AFTER A REVIEW (but see another section in the clustering part)
 
 # ____________________________________________ ADDITIONS ___________________________________________
 # ____________________________________________ ADDITIONS ___________________________________________
