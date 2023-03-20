@@ -200,10 +200,8 @@ ggsave(file.path(figures_path,'MainBehavioral_Bar.tiff'), pp, dpi = 100)
 
 
 # ----------------------------------------- END OF REGISTERED (non-exploratory) ANALYSIS -----------------------------------------
-#---------------------------- ADDED AFTER A REVIEW 
-########################## Reacquisition exploratory behavioral analysis (outcome devaluation induced changes)
 
-# ----- MAIN:
+########################## Reacquisition exploratory behavioral analysis (outcome devaluation induced changes)
 FULL_ra=FULL
 FULL_ra$ra_min_post = FULL_ra$presses_reacquisition - FULL_ra$presses_post
 
@@ -254,9 +252,7 @@ pp
 ggsave(file.path(figures_path,'ReacquisitionBehavioral_Bar.tiff'), pp, dpi = 100)
 
 
-########################## Reacquisition exploratory behavioral analysis (outcome devaluation induced changes)
-
-## Exploratory Kolmogorov-Smirnov test of the habit index
+########################## Exploratory Kolmogorov-Smirnov test of the habit index
 
 habitIndex_data = ddply(FULL,.(ID,GROUP),summarise,habit_index=mean(habit_index))
 shortHabitIndex = habitIndex_data[habitIndex_data$GROUP==1,]$habit_index
@@ -280,7 +276,6 @@ FULL_pressInTrainging$trainingPressingRateExcludingLastRun = scale(FULL_pressInT
 summary(main <- lm(habit_index ~ GROUP*trainingPressingRate, data = FULL_pressInTrainging))
 summary(main <- lm(habit_index ~ GROUP*trainingPressingRateExcludingLastRun, data = FULL_pressInTrainging))
 
-#---------------------------- END OF ADDED AFTER A REVIEW (but see another section in the clustering part)
 
 ###############################################  Some additional analyses:
 fractal_data <- file.path(home_path,'my_databases/txt_data/fractal_ratings_HIS_May_2020.txt')
@@ -302,11 +297,10 @@ t.test(FRACTALS$liking[FRACTALS$value == "val"], FRACTALS$liking[FRACTALS$value 
 # test for group difference and interaction:
 summary(aov(liking ~ group*value + Error (ID/value), data = subset(FRACTALS, value != "baseline"))) # expected non-significant group and interaction effects.
 
-# ----------------------------------------- END OF NON-REGISTERED OF ALL ANALYSES -----------------------------------------
 
-#------------------------------------------------------------------------------
-#--------------------------- Organize subjects in sub-groups: -----------------
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------
+#-------------------------------------------- Organize subjects in sub-groups: ----------------------------------
+#----------------------------------------------------------------------------------------------------------------
 short = FULL[FULL$GROUP==1,]
 long = FULL[FULL$GROUP==3,]
 
@@ -412,9 +406,69 @@ write.csv(clustering_data, file=clustered_data_file, row.names = FALSE)
 # copy the file to the server relevant folder (for the MRI-related analyses):
 system(paste('rsync -a --progress', paste("'",clustered_data_file,"'", sep=""), 'shirangera@boost.tau.ac.il:/export2/DATA/HIS/HIS_server/analysis/behavior_analysis_output/my_databases/txt_data'))
 
+###############################################  Compare satiety-related factors between the subgroups: 
+##### HUNGER:
+RATINGS.hunger_diff = ddply(RATINGS.regular.hunger, .(ID, group, value), transform, hunger_change = liking[time == "post"] - liking[time == "pre"])
+RATINGS.hunger_diff = RATINGS.hunger_diff[RATINGS.hunger_diff$time=='pre',]
+RATINGS.hunger_diff <- subset(RATINGS.hunger_diff, select = -c(time, liking, group, value))
+RATINGS.hunger_diff=merge(RATINGS.hunger_diff,clustering_data, by = "ID")
 
-#---------------------------- ADDED AFTER A REVIEW 
-##### Explore  effects of response rate throughout the task (which maybe represent motivation and aligned with response-outcome experienced contingency)
+ggplot(RATINGS.hunger_diff, aes(x = interaction(Cluster,group), y = hunger_change, fill = Cluster)) + 
+  geom_bar(stat = "summary", fun="mean") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width=.2) +
+  labs(x = "Group", y = "Selecetive Satiety Score", fill = "Cluster")
+
+short_GD_hunger = subset(RATINGS.hunger_diff, group=="Short training" & Cluster=="Goal-directed")
+short_habitual_hunger = subset(RATINGS.hunger_diff, group=="Short training" & Cluster=="Habitual")
+long_GD_hunger = subset(RATINGS.hunger_diff, group=="Extensive training" & Cluster=="Goal-directed")
+long_habitual_hunger = subset(RATINGS.hunger_diff, group=="Extensive training" & Cluster=="Habitual")
+
+t.test(short_GD_hunger$hunger_change, short_habitual_hunger$hunger_change)
+t.test(long_GD_hunger$hunger_change, long_habitual_hunger$hunger_change)
+
+summary(aov_model <- aov(hunger_change ~ group*Cluster, data = RATINGS.hunger_diff))
+omega_squared(aov_model)
+
+t.test(short_GD_hunger$hunger_change)
+t.test(short_habitual_hunger$hunger_change)
+t.test(long_GD_hunger$hunger_change)
+t.test(long_habitual_hunger$hunger_change)
+
+##### Satiety:
+RATINGS.liking_diff = ddply(RATINGS.regular.liking, .(ID, group, value), transform, liking_change = liking[time == "post"] - liking[time == "pre"])
+RATINGS.liking_diff = RATINGS.liking_diff[RATINGS.liking_diff$time=='pre',]
+RATINGS.liking_diff <- subset(RATINGS.liking_diff, select = -c(time, liking))
+RATINGS.selectiveSatiationScore = ddply(RATINGS.liking_diff, .(ID, group), transform, selective_satiety_score = liking_change[value == "val"] - liking_change[value == "deval"])
+
+RATINGS.selectiveSatiationScore = RATINGS.selectiveSatiationScore[RATINGS.selectiveSatiationScore$value=='deval',]
+RATINGS.selectiveSatiationScore <- subset(RATINGS.selectiveSatiationScore, select = -c(value, liking_change, group))
+RATINGS.selectiveSatiationScore=merge(RATINGS.selectiveSatiationScore,clustering_data, by = "ID")
+
+summary(aov_model <- aov(selective_satiety_score ~ group*Cluster, data = RATINGS.selectiveSatiationScore))
+omega_squared(aov_model)
+
+ggplot(RATINGS.selectiveSatiationScore, aes(x = interaction(Cluster,group), y = selective_satiety_score, fill = Cluster)) + 
+  geom_bar(stat = "summary", fun="mean") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width=.2) +
+  labs(x = "Group", y = "Selecetive Satiety Score", fill = "Cluster")
+
+short_GD = subset(RATINGS.selectiveSatiationScore, group=="Short training" & Cluster=="Goal-directed")
+short_habitual = subset(RATINGS.selectiveSatiationScore, group=="Short training" & Cluster=="Habitual")
+long_GD = subset(RATINGS.selectiveSatiationScore, group=="Extensive training" & Cluster=="Goal-directed")
+long_habitual = subset(RATINGS.selectiveSatiationScore, group=="Extensive training" & Cluster=="Habitual")
+
+t.test(short_GD$selective_satiety_score, short_habitual$selective_satiety_score)
+t.test(long_GD$selective_satiety_score, long_habitual$selective_satiety_score)
+
+cor.test(RATINGS.selectiveSatiationScore$habit_score, RATINGS.selectiveSatiationScore$selective_satiety_score)
+
+t.test(short_GD$selective_satiety_score)
+t.test(short_habitual$selective_satiety_score)
+t.test(long_GD$selective_satiety_score)
+t.test(long_habitual$selective_satiety_score)
+
+
+########################## Explore effects of response rate throughout the task in the clustered data (which maybe represent motivation and aligned with response-outcome experienced contingency)
 
 # add trainingPressingRate data
 clustering_data$trainingPressingRate = 0
@@ -430,34 +484,4 @@ omega_squared(main)
 
 summary(main <- aov(trainingPressingRateExcludingLastRun ~ group*Cluster, data = clustering_data))
 omega_squared(main)
-#---------------------------- END OF ADDED AFTER A REVIEW (but see another section in the clustering part)
-
-# ____________________________________________ ADDITIONS ___________________________________________
-# ____________________________________________ ADDITIONS ___________________________________________
-# ____________________________________________ ADDITIONS ___________________________________________
-
-#--------------------------- FLEXMIX TO IDENTIFY CLUSTERS - TRY ON EACH group SEPERATELY -----------------
-
-#  what is the number of clusters that better explains the data
-short=clustering_data[clustering_data$group=="Short training",]
-long=clustering_data[clustering_data$group=="Extensive training",]
-n_clusters <- stepFlexmix(habit_score ~ 1, data = short, control = list(verbose = 0), k = 1:5, nrep = 200)
-getModel(n_clusters, "BIC")
-
-n_clusters <- stepFlexmix(habit_score ~ 1, data = long, control = list(verbose = 0), k = 1:5, nrep = 200)
-getModel(n_clusters, "BIC")
-
-# get cluster size
-getModel(n_clusters, which = 1)
-getModel(n_clusters, which = 2)
-getModel(n_clusters, which = 3)
-getModel(n_clusters, which = 4)
-getModel(n_clusters, which = 5)
-BIC(n_clusters)
-
-# the we do the analysis specifying the number of cluster we found with step flex
-mixlm <- flexmix(habit_score ~ group, data = clustering_data, k = 2)
-mixlm
-print(table(clusters(mixlm), clustering_data$group))
-clustering_data$Cluster = factor(clusters(mixlm)) # create a variable based on the clustering
 
